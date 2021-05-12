@@ -42,24 +42,26 @@ for key, value in cache.items():
     print(key, value)
 ```
 
-### Set expiration time
+### Set expiration time on writing
+
+The expired items will be removed from the storage.
 
 ``` python3    
-import datetime
-
-# setting expiration date on writing 
-# (the expired items will be removed from the storage)
-cache.set('x', 1000, max_age = datetime.timedelta(seconds=1))
-print(cache.get('x'))  # 1000
+cache.set('a', 1000, max_age = datetime.timedelta(seconds=1))
+print(cache.get('a'))  # 1000
 time.sleep(2)     
-print(cache.get('x'))  # None
+print(cache.get('a'))  # None (and removed from storage)
+```
 
-# setting expiration date on reading
-# (the expired items will not be returned)
-cache['y'] = 1000
+### Set expiration time on reading
+
+The expired items will not be returned, but kept in the storage.
+
+``` python3
+cache['b'] = 1000
 time.sleep(2)
-cache.get('y' max_age = datetime.timedelta(seconds=1)) # None
-cache.get('y' max_age = datetime.timedelta(seconds=10)) # 1000
+cache.get('b' max_age = datetime.timedelta(seconds=1)) # None
+cache.get('b' max_age = datetime.timedelta(seconds=9)) # 1000
 ```
 
 ### Set data version 
