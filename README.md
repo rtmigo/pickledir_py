@@ -4,7 +4,7 @@ Object keys can be any string. Objects must be pickle serializable.
 
 ---
 
-Unit-tested with Python 3.7-3.9 on macOS, Ubuntu and Windows . 
+Unit-tested with Python 3.7-3.9 on macOS, Ubuntu and Windows. 
 
 # Install
 
