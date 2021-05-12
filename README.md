@@ -2,7 +2,17 @@ A cache for storing objects inside a file directory.
 
 Object keys can be any string. Objects must be pickle serializable.
 
-# Usage
+---
+
+Unit-tested with Python 3.6-3.9 on macOS, Ubuntu and Windows. 
+
+# Install
+
+``` bash
+$ pip3 install pickledir
+```
+
+# Use
 
 ``` python3
 from pickledir import PickleDir
