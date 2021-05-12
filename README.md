@@ -4,7 +4,7 @@ Object keys can be any string. Objects must be pickle serializable.
 
 ---
 
-Unit-tested with Python 3.6-3.9 on macOS, Ubuntu and Windows. 
+Unit-tested with Python 3.6-3.9 on macOS, Ubuntu and Windows.
 
 # Install
 
@@ -38,7 +38,7 @@ for key, value in cache.items():
 ```
 
 ### Expiration dates
-    
+
 ``` python3    
 import datetime
 
@@ -59,14 +59,20 @@ cache.get('y' max_age = datetime.timedelta(seconds=10)) # 1000
 
 # Under the hood
 
-The technical solution is deliberately naive. Each file stores a pickled `dict`.
-The `stored_dict[key]` keeps the value of element associated with `key`.
+The implementation is deliberately naive. Each file stores a pickled dictionary
+(`dict_in_file: Dict`).
+`dict_in_file[key]` keeps the value of the item associated with `key`.
 
-With small number of items, each item is stored in a separate file (in a
-dictionary with single item). With a larger the number of items, some files will
-store dictionaries with multiple items. Reading and modifying files that contain
-multiple items is predictably slower: we will read and save the whole
-dictionary each time.
+With a small number of items, each item is stored in a separate file (in a
+dictionary with a single item). With a larger number of items, some files will
+store dictionaries with multiple items. There will be a maximum of 4096 files in
+total. The string keys of two items generate the same hash, the items are stored
+in the same file.
 
-There will be a maximum of 4096 files in total. The string keys of two items 
-generate the same hash, the items are stored in the same file.
+This solution is extremely simple and universally compatible.
+
+However, with a large number or size of items, disadvantages also appear.
+Reading and modifying files that contain multiple items is predictably slower:
+we will read and save the whole dictionary each time.
+
+
