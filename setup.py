@@ -15,7 +15,6 @@ setup(
     install_requires=[],
     packages=['pickledir'],
 
-
     description="File-based key-value storage. Keys are strings, values are "
                 "objects pickle serializable.",
 
@@ -34,6 +33,6 @@ setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Operating System :: POSIX",
-        "Operating System :: Windows",
+        "Operating System :: Microsoft :: Windows",
     ],
 )
