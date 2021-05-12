@@ -48,6 +48,7 @@ jobs:
       run: |
         #export PYTHONPATH=".:$PYTHONPATH"
         pip3 install neatest
+        #neatest
         python3 ./test_unit.py
 
   to-staging:
