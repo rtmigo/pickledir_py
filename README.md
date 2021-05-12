@@ -14,6 +14,8 @@ $ pip3 install pickledir
 
 # Use
 
+### Save, read, delete
+
 ``` python3
 from pickledir import PickleDir
 
@@ -28,16 +30,19 @@ cache['c'] = [1, 2, 3, 4, 5]
 print(cache['a'])
 print(cache['b'])
 print(cache['c'])
+
+# delete item
+del cache['b']
 ```
 
-### Reading all values
+### Read all values
 
 ``` python3
 for key, value in cache.items():
     print(key, value)
 ```
 
-### Expiration dates
+### Set expiration time
 
 ``` python3    
 import datetime

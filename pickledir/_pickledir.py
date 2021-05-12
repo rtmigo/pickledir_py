@@ -82,6 +82,10 @@ class PickleDir(Generic[T]):
 
     def _save_file(self, filepath: Path, items: Dict[str, Record]):
 
+        if not items:
+            os.remove(filepath)
+            return
+
         if not filepath.parent.exists():
             filepath.parent.mkdir(parents=True)
 
@@ -93,11 +97,7 @@ class PickleDir(Generic[T]):
             pass
 
         with temp_filepath.open("wb") as f:
-            # pickle.dump(self.version, f, pickle.HIGHEST_PROTOCOL)
             pickle.dump((self.version, items), f, pickle.HIGHEST_PROTOCOL)
-
-        #if filepath.exists():
-        #    os.remove(str(filepath)) # dangerous?
 
         temp_filepath.replace(filepath)
 
@@ -116,6 +116,13 @@ class PickleDir(Generic[T]):
 
         dict_in_file[key] = Record(creationTime, expirationTime, value)
 
+        self._save_file(filepath, dict_in_file)
+
+    def __delitem__(self, key: str):
+        filepath = self._key_to_file(key)
+        dict_in_file = self._load_records(filepath, can_write=False)
+        if key in dict_in_file:
+            del dict_in_file[key]
         self._save_file(filepath, dict_in_file)
 
     def _get_record(self, key: str, max_age: timedelta = None) \
@@ -138,10 +145,12 @@ class PickleDir(Generic[T]):
         """
 
         path = self._key_to_file(key)
-        if not path.exists():  # todo
-            return None
 
-        items_dict = self._load_records(path, can_write=True)
+        try:
+            items_dict = self._load_records(path, can_write=True)
+        except FileNotFoundError:
+            return None
+        
         item = items_dict.get(key)
 
         if max_age is not None and item is not None:
@@ -189,5 +198,3 @@ class PickleDir(Generic[T]):
     def items(self) -> Iterator[Tuple[str, T]]:
         for url, rec in self.iter_records():
             yield url, rec[2]
-
-
