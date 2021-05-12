@@ -86,12 +86,22 @@ cache = PickleDir('/tmp/my_cache', version=2)
 print(cache.get('a'))  # None
 ```
 
-Now all that is saved with version 2 is actual data. Any other version is 
+Now all that is saved with version `2` is actual data. Any other version is 
 considered obsolete and will be gradually removed.
 
-``` python3 
-cache = PickleDir('/tmp/my_cache', version=1)
-print(cache.get('a'))  # Schrödinger's data
+Do not create the `PickleDir` with an old version number. 
+It will make the data unpredictable.
+
+``` python3
+cacheV1 = PickleDir('/tmp/my_cache', version=1)  # ok
+cacheV1['a'] = 'old A'
+cacheV1['b'] = 'old B'
+
+cacheV2 = PickleDir('/tmp/my_cache', version=2)  # ok
+cacheV2['a'] = 'new A'
+
+cacheV1 = PickleDir('/tmp/my_cache', version=1)  # don't do this
+print(cacheV1.get('b'))  # Schrödinger's data ('old B' or None)
 ```
 
 
