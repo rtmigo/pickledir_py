@@ -19,7 +19,7 @@ $ pip3 install pickledir
 ``` python3
 from pickledir import PickleDir
 
-cache = PickleDir('/tmp/my_cache')
+cache = PickleDir('/tmp/my_cache_dir')
 
 # saving data to files
 cache['a'] = 'hello, user!'
