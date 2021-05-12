@@ -187,7 +187,6 @@ class PickleDir(Generic[T]):
         for fn in self.dirpath.glob("*"):
 
             if self._is_temp_filename(fn):
-                # todo test
                 os.remove(str(fn))
             for key, rec in self._load_records(fn).items():
                 yield key, rec
