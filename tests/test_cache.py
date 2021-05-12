@@ -48,6 +48,26 @@ class TestCache(unittest.TestCase):
             cache['abc'] = 42
             self.assertTrue('abc' in cache)
 
+    def test_delete(self):
+        with TemporaryDirectory() as td:
+            cache = PickleDir(td)
+            cache['a'] = 1
+            cache['b'] = 2
+            cache['c'] = 3
+            self.assertIn('a', cache)
+            self.assertIn('b', cache)
+            self.assertIn('c', cache)
+
+            del cache['b']
+            self.assertIn('a', cache)
+            self.assertNotIn('b', cache)
+            self.assertIn('c', cache)
+
+            del cache['a']
+            self.assertNotIn('a', cache)
+            self.assertNotIn('b', cache)
+            self.assertIn('c', cache)
+
     def test_expires_on_set(self):
         with TemporaryDirectory() as td:
             cache = PickleDir(td)

@@ -60,7 +60,7 @@ class PickleDir(Generic[T]):
 
         changed = False
         if itemsDict:
-            now = self.now()
+            now = self._now()
             for key, (creationTime, expirationTime, message) in tuple(
                     itemsDict.items()):
                 if expirationTime and now >= expirationTime:
@@ -82,6 +82,10 @@ class PickleDir(Generic[T]):
 
     def _save_file(self, filepath: Path, items: Dict[str, Record]):
 
+        if not items:
+            os.remove(filepath)
+            return
+
         if not filepath.parent.exists():
             filepath.parent.mkdir(parents=True)
 
@@ -93,32 +97,35 @@ class PickleDir(Generic[T]):
             pass
 
         with temp_filepath.open("wb") as f:
-            # pickle.dump(self.version, f, pickle.HIGHEST_PROTOCOL)
             pickle.dump((self.version, items), f, pickle.HIGHEST_PROTOCOL)
 
-        if filepath.exists():
-            os.remove(str(filepath))
-
-        temp_filepath.rename(filepath)
+        temp_filepath.replace(filepath)
 
     @staticmethod
-    def now():
+    def _now():
         return datetime.utcnow().replace(tzinfo=timezone.utc)
 
-    def set(self, key: str, value: T = None,
+    def set(self, key: str, value: T,
             max_age: timedelta = None) -> None:
 
         filepath = self._key_to_file(key)
-        problems = self._load_records(filepath, can_write=False)
+        dict_in_file = self._load_records(filepath, can_write=False)
 
-        creationTime = self.now()
+        creationTime = self._now()
         expirationTime = creationTime + max_age if max_age else None
 
-        problems[key] = Record(creationTime, expirationTime, value)
+        dict_in_file[key] = Record(creationTime, expirationTime, value)
 
-        self._save_file(filepath, problems)
+        self._save_file(filepath, dict_in_file)
 
-    def get_record(self, key: str, max_age: timedelta = None) \
+    def __delitem__(self, key: str):
+        filepath = self._key_to_file(key)
+        dict_in_file = self._load_records(filepath, can_write=False)
+        if key in dict_in_file:
+            del dict_in_file[key]
+        self._save_file(filepath, dict_in_file)
+
+    def _get_record(self, key: str, max_age: timedelta = None) \
             -> Optional[Record]:
 
         """
@@ -138,15 +145,17 @@ class PickleDir(Generic[T]):
         """
 
         path = self._key_to_file(key)
-        if not path.exists():  # todo
+
+        try:
+            items_dict = self._load_records(path, can_write=True)
+        except FileNotFoundError:
             return None
 
-        items_dict = self._load_records(path, can_write=True)
         item = items_dict.get(key)
 
         if max_age is not None and item is not None:
             creationTime = item[0]
-            minCreationTime = self.now() - max_age
+            minCreationTime = self._now() - max_age
             if creationTime < minCreationTime:
                 return None
 
@@ -165,7 +174,7 @@ class PickleDir(Generic[T]):
     def get(self, key: str, max_age: timedelta = None,
             default=None) -> T:
 
-        item = self.get_record(key, max_age)
+        item = self._get_record(key, max_age)
         if item is not None:
             return item[2]
         else:
@@ -174,7 +183,7 @@ class PickleDir(Generic[T]):
             else:
                 return default
 
-    def iter_records(self) -> Iterator[Tuple[str, Tuple]]:
+    def _iter_records(self) -> Iterator[Tuple[str, Tuple]]:
         for fn in self.dirpath.glob("*"):
 
             if self._is_temp_filename(fn):
@@ -184,10 +193,8 @@ class PickleDir(Generic[T]):
                 yield key, rec
 
     def __contains__(self, key: str) -> bool:
-        return self.get_record(key) is not None  # todo optimize
+        return self._get_record(key) is not None  # todo optimize
 
     def items(self) -> Iterator[Tuple[str, T]]:
-        for url, rec in self.iter_records():
+        for url, rec in self._iter_records():
             yield url, rec[2]
-
-

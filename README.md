@@ -14,6 +14,8 @@ $ pip3 install pickledir
 
 # Use
 
+### Save, read, delete
+
 ``` python3
 from pickledir import PickleDir
 
@@ -28,16 +30,19 @@ cache['c'] = [1, 2, 3, 4, 5]
 print(cache['a'])
 print(cache['b'])
 print(cache['c'])
+
+# delete item
+del cache['b']
 ```
 
-### Reading all values
+### Read all values
 
 ``` python3
 for key, value in cache.items():
     print(key, value)
 ```
 
-### Expiration dates
+### Set expiration time
 
 ``` python3    
 import datetime
@@ -56,6 +61,37 @@ time.sleep(2)
 cache.get('y' max_age = datetime.timedelta(seconds=1)) # None
 cache.get('y' max_age = datetime.timedelta(seconds=10)) # 1000
 ```
+
+### Set data version 
+
+``` puthon3 
+cache = PickleDir('/tmp/my_cache', version=1)
+cache['a'] = 'some_data'
+```
+
+You can read all stored data while the `version` value is `1`.
+
+``` python3 
+cache = PickleDir('/tmp/my_cache', version=1)
+print(cache.get('a'))  # 'some_data'
+```
+
+If you decide that all the data in the cache is out of date, just pass the 
+constructor a version number that you haven't used before.
+
+``` python3 
+cache = PickleDir('/tmp/my_cache', version=2)
+print(cache.get('a'))  # None
+```
+
+Now all that is saved with version 2 is actual data. Any other version is 
+considered obsolete and will be gradually removed.
+
+``` python3 
+cache = PickleDir('/tmp/my_cache', version=1)
+print(cache.get('a'))  # Schrödinger's data
+```
+
 
 # Under the hood
 
