@@ -15,7 +15,6 @@ setup(
     install_requires=[],
     packages=['pickledir'],
 
-
     description="File-based key-value storage. Keys are strings, values are "
                 "objects pickle serializable.",
 
