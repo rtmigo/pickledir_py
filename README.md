@@ -62,6 +62,37 @@ cache.get('y' max_age = datetime.timedelta(seconds=1)) # None
 cache.get('y' max_age = datetime.timedelta(seconds=10)) # 1000
 ```
 
+### Set data version 
+
+``` puthon3 
+cache = PickleDir('/tmp/my_cache', version=1)
+cache['a'] = 'some_data'
+```
+
+You can read all stored data while the `version` value is `1`.
+
+``` python3 
+cache = PickleDir('/tmp/my_cache', version=1)
+print(cache.get('a'))  # 'some_data'
+```
+
+If you decide that all the data in the cache is out of date, just pass the 
+constructor a version number that you haven't used before.
+
+``` python3 
+cache = PickleDir('/tmp/my_cache', version=2)
+print(cache.get('a'))  # None
+```
+
+Now all that is saved with version 2 is actual data. Any other version is 
+considered obsolete and will be gradually removed.
+
+``` python3 
+cache = PickleDir('/tmp/my_cache', version=1)
+print(cache.get('a'))  # Schrödinger's data
+```
+
+
 # Under the hood
 
 The implementation is deliberately naive. Each file stores a pickled dictionary
