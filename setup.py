@@ -16,8 +16,8 @@ setup(
     packages=['pickledir'],
 
 
-    description="Universal entry point for Docker images containing "
-                "WSGI apps for the AWS Lambda.",
+    description="File-based key-value storage. Keys are strings, values are "
+                "objects serializable with pickle.",
 
     keywords="cache pickle".split(),
 
