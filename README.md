@@ -1,6 +1,6 @@
-A cache for storing objects inside a file directory.
+File-based key-value storage.
 
-Object keys can be any string. Objects must be pickle serializable.
+Keys can be any string. Objects must be [pickle](https://docs.python.org/3/library/pickle.html) serializable.
 
 ---
 

@@ -166,6 +166,23 @@ class TestCache(unittest.TestCase):
             self.assertEqual(cache[k2], 2)
             self.assertEqual(cache[k3], 3)
 
+    def test_temp_files_removed_on_iteraton(self):
+        with TemporaryDirectory() as td:
+            cache = PickleDir(td)
+            cache['a'] = 1
+            cache['b'] = 2
+            cache['c'] = 3
+
+            tmp = (cache.dirpath/"~labuda.dat")
+            tmp.write_text('life is short')
+            self.assertTrue(tmp.exists())
+
+            self.assertEqual(len(list(cache.items())), 3)
+
+            self.assertFalse(tmp.exists())
+
+
+
 
 def find_same_hash_keys(first_key="key_one") -> Iterable[str]:
     first_key_hash = PickleDir._key_to_hash(first_key)
