@@ -17,7 +17,7 @@ setup(
 
 
     description="File-based key-value storage. Keys are strings, values are "
-                "objects serializable with pickle.",
+                "objects pickle serializable.",
 
     keywords="cache pickle".split(),
 
@@ -34,5 +34,6 @@ setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Operating System :: POSIX",
+        "Operating System :: Windows",
     ],
 )
