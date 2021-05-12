@@ -60,7 +60,7 @@ class PickleDir(Generic[T]):
 
         changed = False
         if itemsDict:
-            now = self.now()
+            now = self._now()
             for key, (creationTime, expirationTime, message) in tuple(
                     itemsDict.items()):
                 if expirationTime and now >= expirationTime:
@@ -102,7 +102,7 @@ class PickleDir(Generic[T]):
         temp_filepath.replace(filepath)
 
     @staticmethod
-    def now():
+    def _now():
         return datetime.utcnow().replace(tzinfo=timezone.utc)
 
     def set(self, key: str, value: T,
@@ -111,7 +111,7 @@ class PickleDir(Generic[T]):
         filepath = self._key_to_file(key)
         dict_in_file = self._load_records(filepath, can_write=False)
 
-        creationTime = self.now()
+        creationTime = self._now()
         expirationTime = creationTime + max_age if max_age else None
 
         dict_in_file[key] = Record(creationTime, expirationTime, value)
@@ -150,12 +150,12 @@ class PickleDir(Generic[T]):
             items_dict = self._load_records(path, can_write=True)
         except FileNotFoundError:
             return None
-        
+
         item = items_dict.get(key)
 
         if max_age is not None and item is not None:
             creationTime = item[0]
-            minCreationTime = self.now() - max_age
+            minCreationTime = self._now() - max_age
             if creationTime < minCreationTime:
                 return None
 
@@ -183,7 +183,7 @@ class PickleDir(Generic[T]):
             else:
                 return default
 
-    def iter_records(self) -> Iterator[Tuple[str, Tuple]]:
+    def _iter_records(self) -> Iterator[Tuple[str, Tuple]]:
         for fn in self.dirpath.glob("*"):
 
             if self._is_temp_filename(fn):
@@ -196,5 +196,5 @@ class PickleDir(Generic[T]):
         return self._get_record(key) is not None  # todo optimize
 
     def items(self) -> Iterator[Tuple[str, T]]:
-        for url, rec in self.iter_records():
+        for url, rec in self._iter_records():
             yield url, rec[2]
