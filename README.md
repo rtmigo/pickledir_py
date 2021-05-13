@@ -19,7 +19,7 @@ $ pip3 install pickledir
 ``` python3
 from pickledir import PickleDir
 
-cache = PickleDir('/tmp/my_cache_dir')
+cache = PickleDir('path/to/my_cache_dir')
 
 # saving data to files
 cache['a'] = 'hello, user!'
@@ -66,15 +66,15 @@ cache.get('b' max_age = datetime.timedelta(seconds=9)) # 1000
 
 ### Set data version 
 
-``` puthon3 
-cache = PickleDir('/tmp/my_cache', version=1)
+``` python3 
+cache = PickleDir('path/to/dir', version=1)
 cache['a'] = 'some_data'
 ```
 
 You can read all stored data while the `version` value is `1`.
 
 ``` python3 
-cache = PickleDir('/tmp/my_cache', version=1)
+cache = PickleDir('path/to/dir', version=1)
 print(cache.get('a'))  # 'some_data'
 ```
 
@@ -82,7 +82,7 @@ If you decide that all the data in the cache is out of date, just pass the
 constructor a version number that you haven't used before.
 
 ``` python3 
-cache = PickleDir('/tmp/my_cache', version=2)
+cache = PickleDir('path/to/dir', version=2)
 print(cache.get('a'))  # None
 ```
 
@@ -93,14 +93,14 @@ Do not create the `PickleDir` with an old version number.
 It will make the data unpredictable.
 
 ``` python3
-cacheV1 = PickleDir('/tmp/my_cache', version=1)  # ok
+cacheV1 = PickleDir('path/to/dir', version=1)  # ok
 cacheV1['a'] = 'old A'
 cacheV1['b'] = 'old B'
 
-cacheV2 = PickleDir('/tmp/my_cache', version=2)  # ok
+cacheV2 = PickleDir('path/to/dir', version=2)  # ok
 cacheV2['a'] = 'new A'
 
-cacheV1 = PickleDir('/tmp/my_cache', version=1)  # don't do this
+cacheV1 = PickleDir('path/to/dir', version=1)  # don't do this
 print(cacheV1.get('b'))  # Schrödinger's data ('old B' or None)
 ```
 
