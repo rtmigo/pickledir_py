@@ -1,15 +1,14 @@
 from pathlib import Path
-
 from setuptools import setup
 
 
 def load_module_dict(filename: str) -> dict:
     import importlib.util as ilu
+    filename = Path(__file__).parent/filename
     spec = ilu.spec_from_file_location('', filename)
     module = ilu.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module.__dict__
-
 
 setup(
     name="pickledir",
