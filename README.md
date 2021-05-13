@@ -1,6 +1,7 @@
 File-based key-value storage.
 
-Keys can be any string. Objects must be [pickle](https://docs.python.org/3/library/pickle.html) serializable.
+Keys can be any string. Objects must
+be [pickle](https://docs.python.org/3/library/pickle.html) serializable.
 
 ---
 
@@ -14,7 +15,7 @@ $ pip3 install pickledir
 
 # Use
 
-### Save, read, delete
+## Save, read, delete
 
 ``` python3
 from pickledir import PickleDir
@@ -35,14 +36,14 @@ print(cache['c'])
 del cache['b']
 ```
 
-### Read all values
+## Read all values
 
 ``` python3
 for key, value in cache.items():
     print(key, value)
 ```
 
-### Set expiration time on writing
+## Set expiration time on writing
 
 The expired items will be removed from the storage.
 
@@ -53,7 +54,7 @@ time.sleep(2)
 print(cache.get('a'))  # None (and removed from storage)
 ```
 
-### Set expiration time on reading
+## Set expiration time on reading
 
 The expired items will not be returned, but kept in the storage.
 
@@ -64,7 +65,7 @@ cache.get('b' max_age = datetime.timedelta(seconds=1)) # None
 cache.get('b' max_age = datetime.timedelta(seconds=9)) # 1000
 ```
 
-### Set data version 
+## Set data version
 
 ``` python3 
 cache = PickleDir('path/to/dir', version=1)
@@ -78,7 +79,7 @@ cache = PickleDir('path/to/dir', version=1)
 print(cache.get('a'))  # 'some_data'
 ```
 
-If you decide that all the data in the cache is out of date, just pass the 
+If you decide that all the data in the cache is out of date, just pass the
 constructor a version number that you haven't used before.
 
 ``` python3 
@@ -86,11 +87,11 @@ cache = PickleDir('path/to/dir', version=2)
 print(cache.get('a'))  # None
 ```
 
-Now all that is saved with version `2` is actual data. Any other version is 
+Now all that is saved with version `2` is actual data. Any other version is
 considered obsolete and will be gradually removed.
 
-Do not create the `PickleDir` with an old version number. 
-It will make the data unpredictable.
+Do not create the `PickleDir` with an old version number. It will make the data
+unpredictable.
 
 ``` python3
 cacheV1 = PickleDir('path/to/dir', version=1)  # ok
@@ -104,23 +105,18 @@ cacheV1 = PickleDir('path/to/dir', version=1)  # don't do this
 print(cacheV1.get('b'))  # Schrödinger's data ('old B' or None)
 ```
 
-
 # Under the hood
 
-The implementation is deliberately naive. Each file stores a pickled dictionary
-(`dict_in_file: Dict`).
-`dict_in_file[key]` keeps the value of the item associated with `key`.
+Serialized data is stored inside files in the same directory. The maximum number
+of files is limited to 4096. Each file contains one or more items.
 
-With a small number of items, each item is stored in a separate file (in a
-dictionary with a single item). With a larger number of items, some files will
-store dictionaries with multiple items. There will be a maximum of 4096 files in
-total. The string keys of two items generate the same hash, the items are stored
-in the same file.
+This implementation is extremely simple and universally compatible. It has zero
+initialization time. It is very fast when reading and writing, when the number
+of items is small.
 
-This solution is extremely simple and universally compatible.
+However, if the file contains more than one item, each read / write operation
+takes longer. If there are 3 items in the file, we have to read all three, even
+if only one is requested.
 
-However, with a large number or size of items, disadvantages also appear.
-Reading and modifying files that contain multiple items is predictably slower:
-we will read and save the whole dictionary each time.
-
-
+If we have more than 4096 items, it is absolutely certain that some of them are
+adjacent in the same file. With so many items, it's worth choosing a different caching solution.
