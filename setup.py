@@ -1,13 +1,19 @@
-from importlib.machinery import SourceFileLoader
 from pathlib import Path
+
 from setuptools import setup
 
-constants = SourceFileLoader('constants',
-                             'pickledir/_constants.py').load_module()
+
+def load_module_dict(filename: str) -> dict:
+    import importlib.util as ilu
+    spec = ilu.spec_from_file_location('', filename)
+    module = ilu.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module.__dict__
+
 
 setup(
     name="pickledir",
-    version=constants.__dict__['__version__'],
+    version=load_module_dict('pickledir/_constants.py')['__version__'],
     author="Artёm IG",
     author_email="ortemeo@gmail.com",
     url='https://github.com/rtmigo/pickledir_py#readme',
