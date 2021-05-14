@@ -44,9 +44,9 @@ del cache['key']
 ## Type hints
 
 ``` python3
-cache: PickleDir[str, int] = PickleDir('path/to/my_cache_dir')
+# declaring PickleDir with string keys and integer values:
 
-cache['string'] = 1
+cache: PickleDir[str, int] = PickleDir('path/to/my_cache_dir')
 ```
 
 ## Set expiration time on writing
