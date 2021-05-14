@@ -154,14 +154,13 @@ print(cacheV1.get('b'))  # Schrödinger's data ('old B' or None)
 # Benchmarks
 
 Casually saving 10 items and reading them again:
+
 ``` python3
 for i in range(10):
     cache[str(i)] = {"data": i, "other": None}
 for i in range(10):
     _ = cache[str(i)]
 ```
-
-
 
 Storage | Time
 --------|-----
@@ -171,23 +170,26 @@ Storage | Time
 
 The lower "time" is better.
 
-Measured on macOS, Python 3.8, SATA HDD (not SSD), Journaled HFS+. 
+Measured on macOS, Python 3.8, SATA HDD (not SSD), Journaled HFS+.
 
-See sources in [benchmark](https://github.com/rtmigo/pickledir_py/tree/dev/benchmark) dir.
+See sources
+in [benchmark](https://github.com/rtmigo/pickledir_py/tree/dev/benchmark) dir.
+
+The main advantage of
+`pickledir` is the lack of time required to create a database or initialize
+tables. If we did not save 10 elements, but 1000 in a row,
+`shelve` and `diskcache` would be faster than `pickledir`.
 
 # Under the hood
 
-Serialized data is stored inside files in the same directory. The maximum number
-of files is limited to 4096. Each file contains one or more items.
+Serialized data is stored inside files in the same directory. Each file contains
+one or more items. The maximum number of files is limited to 4096. The values
+are uniformly distributed between the files.
 
-This implementation is extremely simple and universally compatible. It has zero
-initialization time. It is very fast when reading and writing, when the number
-of items is small.
+Reading is slower when a file contains more than one item. Therefore, the
+PickleDir is better suited for cases with the number of items within a few
+thousand.
 
-However, if the file contains more than one item, each read/write operation
-takes longer. If there are 3 items in the file, we have to read all three, even
-if only one is requested.
 
-If we have more than 4096 items, it is absolutely certain that some of them are
-adjacent in the same file. With so many items, the PickleDir may be not so
-efficient as database-based caches.
+
+
