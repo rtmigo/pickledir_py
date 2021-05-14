@@ -2,7 +2,7 @@
 
 File-based key-value storage.
 
-Key and values are serialized
+Keys and values are serialized
 with [pickle](https://docs.python.org/3/library/pickle.html). Data is kept in
 files in the specified directory.
 
