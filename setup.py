@@ -11,7 +11,6 @@ def load_module_dict(filename: str) -> dict:
     spec.loader.exec_module(module)
     return module.__dict__
 
-
 setup(
     name="pickledir",
     version=load_module_dict('pickledir/_constants.py')['__version__'],

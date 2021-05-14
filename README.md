@@ -1,7 +1,11 @@
 File-based key-value storage.
 
-Keys and objects must
-be [pickle](https://docs.python.org/3/library/pickle.html) serializable.
+Key and values are serialized
+with [pickle](https://docs.python.org/3/library/pickle.html).
+
+The storage has zero initialization time, fast on random access, fast reads and
+writes. Preferred for collections with a small number of items (within 2-3
+thousand).
 
 ---
 
@@ -124,4 +128,5 @@ takes longer. If there are 3 items in the file, we have to read all three, even
 if only one is requested.
 
 If we have more than 4096 items, it is absolutely certain that some of them are
-adjacent in the same file. With so many items, it's worth choosing a different caching solution.
+adjacent in the same file. With so many items, it's worth choosing a different
+caching solution.
