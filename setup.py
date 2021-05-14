@@ -11,16 +11,19 @@ def load_module_dict(filename: str) -> dict:
     spec.loader.exec_module(module)
     return module.__dict__
 
+
+name = "pickledir"
+
 setup(
-    name="pickledir",
-    version=load_module_dict('pickledir/_constants.py')['__version__'],
+    name=name,
+    version=load_module_dict(f'{name}/_constants.py')['__version__'],
     author="Artёm IG",
     author_email="ortemeo@gmail.com",
     url='https://github.com/rtmigo/pickledir_py#readme',
 
     python_requires='>=3.8',  # needed for faster pickle protocol version 5
     install_requires=[],
-    packages=['pickledir'],
+    packages=[name],
 
     description="File-based key-value storage for pickle-serializable "
                 "keys and values.",
@@ -35,8 +38,6 @@ setup(
     classifiers=[
         'Development Status :: 4 - Beta',
         'License :: OSI Approved :: MIT License',
-        #"Programming Language :: Python :: 3.6",
-        #"Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Operating System :: POSIX",

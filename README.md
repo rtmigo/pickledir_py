@@ -2,14 +2,15 @@ File-based key-value storage.
 
 Key and values are serialized
 with [pickle](https://docs.python.org/3/library/pickle.html).
+Data is kept in files in the specified directory.
 
-The storage has zero initialization time, fast on random access, fast reads and
-writes. Preferred for collections with a small number of items (within 2-3
-thousand).
+The storage has zero initialization time, fast random access, fast reads and
+writes. Preferred for collections when the number of items is within 
+3 thousands.
 
 ---
 
-Unit-tested with Python 3.8-3.9 on macOS, Ubuntu and Windows.
+CI-tested with Python 3.8-3.9 on macOS, Ubuntu and Windows.
 
 # Install
 

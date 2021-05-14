@@ -2,3 +2,4 @@
 # SPDX-License-Identifier: MIT
 
 from ._pickledir import PickleDir
+from ._constants import __version__
