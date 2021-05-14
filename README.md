@@ -1,6 +1,6 @@
 File-based key-value storage.
 
-Keys can be any string. Objects must
+Keys and objects must
 be [pickle](https://docs.python.org/3/library/pickle.html) serializable.
 
 ---

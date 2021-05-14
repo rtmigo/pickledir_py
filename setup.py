@@ -19,12 +19,12 @@ setup(
     author_email="ortemeo@gmail.com",
     url='https://github.com/rtmigo/pickledir_py#readme',
 
-    python_requires='>=3.6',
+    python_requires='>=3.8',  # needed for faster pickle protocol version 5
     install_requires=[],
     packages=['pickledir'],
 
-    description="File-based key-value storage. Keys are strings, values are "
-                "objects pickle serializable.",
+    description="File-based key-value storage for pickle-serializable "
+                "keys and values.",
 
     keywords="cache pickle file directory".split(),
 
@@ -36,8 +36,8 @@ setup(
     classifiers=[
         'Development Status :: 4 - Beta',
         'License :: OSI Approved :: MIT License',
-        "Programming Language :: Python :: 3.6",
-        "Programming Language :: Python :: 3.7",
+        #"Programming Language :: Python :: 3.6",
+        #"Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Operating System :: POSIX",

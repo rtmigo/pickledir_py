@@ -33,6 +33,18 @@ class TestCache(unittest.TestCase):
 
             self.assertEqual(cache['abc'], 42)
 
+    def test_keys_types(self):
+        with TemporaryDirectory() as td:
+            cache = PickleDir(td)
+
+            cache[5] = 23
+            cache[{1, 2, 3, 4, 5}] = 'the set'
+            cache[ [{5, 1}, {3, 4}] ] = 'list with sets'
+
+            self.assertEqual(cache[{1, 2, 3, 4, 5}], 'the set')
+            self.assertEqual(cache[[{5, 1}, {3, 4}]], 'list with sets')
+            self.assertEqual(cache[5], 23)
+
     def test_get_default(self):
         with TemporaryDirectory() as td:
             cache = PickleDir(td)
@@ -144,11 +156,13 @@ class TestCache(unittest.TestCase):
 
     def test_same_hash(self):
         k1 = 'key_one'
-        k2 = 'key2076'
-        k3 = 'key15414'
+        same = iter(find_same_hash_keys(k1))
+        next(same)
+        k2 = next(same)
+        k3 = next(same)
         # ['key_one', 'key2076', 'key15414', 'key16919', 'key24046']
-        self.assertEqual(PickleDir._key_to_hash(k1), PickleDir._key_to_hash(k2))
-        self.assertEqual(PickleDir._key_to_hash(k1), PickleDir._key_to_hash(k3))
+        # self.assertEqual(PickleDir._key_to_hash(k1), PickleDir._key_to_hash(k2))
+        # self.assertEqual(PickleDir._key_to_hash(k1), PickleDir._key_to_hash(k3))
         with TemporaryDirectory() as td:
             cache = PickleDir(td)
 
@@ -173,7 +187,7 @@ class TestCache(unittest.TestCase):
             cache['b'] = 2
             cache['c'] = 3
 
-            tmp = (cache.dirpath/"~labuda.dat")
+            tmp = (cache.dirpath / "~labuda.dat")
             tmp.write_text('life is short')
             self.assertTrue(tmp.exists())
 
@@ -182,23 +196,27 @@ class TestCache(unittest.TestCase):
             self.assertFalse(tmp.exists())
 
 
+def key_to_hash(key: object) -> str:
+    return PickleDir._key_bytes_to_hash(PickleDir._key_to_bytes(key))
 
 
 def find_same_hash_keys(first_key="key_one") -> Iterable[str]:
-    first_key_hash = PickleDir._key_to_hash(first_key)
+    first_key_hash = key_to_hash(first_key)
     i = 0
     yield first_key
     while True:
         i += 1
         k = f"key{i}"
-        if PickleDir._key_to_hash(k) == first_key_hash:
+        if key_to_hash(k) == first_key_hash:
             yield k
 
 
 if __name__ == "__main__":
+    pass
+    # find_same_hash_keys()
     # TestCache().test_get_set_item()
-    TestCache().test_file_removed_when_expired()
-    # unittest.main()
+    # TestCache().test_file_removed_when_expired()
+    unittest.main()
     # from itertools import islice
     # print(list(islice(find_same_hash_keys(), 5)))
     # print()
