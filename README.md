@@ -161,13 +161,19 @@ for i in range(10):
     _ = cache[str(i)]
 ```
 
+
+
 Storage | Time
 --------|-----
 `PickleDir` | 0.42
 `shelve` | 6.68
 `diskcache.Cache` | 1.09
 
+Lower time means faster caching.
 
+Measured on macOS, Python 3.8, HDD (not SSD).
+
+See sources in [benchmark](https://github.com/rtmigo/pickledir_py/tree/dev/benchmark) dir.
 
 # Under the hood
 
