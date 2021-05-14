@@ -33,7 +33,7 @@ def run_shelve():
 
 
 def bench(name: str, func: Callable):
-    time = timeit.timeit(  # setup = mysetup,
+    time = timeit.timeit(
         stmt=func,
         number=100)
     print(f"{name} | {time:.2f}")
@@ -46,14 +46,3 @@ if __name__ == "__main__":
         bench("PickleDir", run_pickledir)
         bench("shelve", run_shelve)
         bench("diskcache", run_diskcache)
-
-    # print(
-    #     "PickleDir",
-    #     timeit.timeit(  # setup = mysetup,
-    #         stmt=run_pickledir,
-    #         number=100))
-    # print(
-    #     "diskcache",
-    #     timeit.timeit(  # setup = mysetup,
-    #         stmt=run_diskcache,
-    #         number=100))
