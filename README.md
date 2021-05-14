@@ -18,7 +18,7 @@ Unlike [shelve](https://docs.python.org/3/library/shelve.html) the data saved by
 PickleDir is cross-platform: you can write it on Linux and read on Windows.
 Unlike most database-based caching solutions (including the shelve), the
 PickleDir does not require the "open" and "close" the storage. It's always open,
-since it's just a directory in a file system.
+since it's just a directory in the file system.
 
 # Install
 
