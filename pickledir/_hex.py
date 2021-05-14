@@ -36,4 +36,4 @@ def hash_4096(data: bytes) -> str:
 
     h = h ^ (h >> 12) ^ (h >> 24)
 
-    return mask_4096(h)
+    return mask_4096(h)  # todo make less calls

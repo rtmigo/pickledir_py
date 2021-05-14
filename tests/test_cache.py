@@ -200,6 +200,11 @@ class TestCache(unittest.TestCase):
             cache: PickleDir[str, int] = PickleDir(td)
             cache['a'] = 1
 
+    def test_hashes_do_not_change(self):
+        self.assertEqual(key_to_hash('first'), '7a4')
+        self.assertEqual(key_to_hash('second'), '68f')
+        self.assertEqual(key_to_hash('third'), '09b')
+
 
 def key_to_hash(key: object) -> str:
     return PickleDir._key_bytes_to_hash(PickleDir._key_to_bytes(key))
@@ -213,19 +218,20 @@ def find_same_hash_keys(first_key="key_one") -> Iterable[str]:
     while True:
         i += 1
         k = f"key{i}"
-        #k = k[::-1]
-        #print(key_to_hash(k))
+        # k = k[::-1]
+        # print(key_to_hash(k))
         if key_to_hash(k) == first_key_hash:
             yield k
 
 
 if __name__ == "__main__":
-    #find_same_hash_keys()
+    # find_same_hash_keys()
     pass
     # find_same_hash_keys()
     # TestCache().test_get_set_item()
     # TestCache().test_file_removed_when_expired()
-    #unittest.main()
+    # unittest.main()
     from itertools import islice
+
     print(list(islice(find_same_hash_keys(), 5)))
     # print()
