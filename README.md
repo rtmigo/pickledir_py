@@ -151,6 +151,24 @@ cacheV1 = PickleDir('path/to/dir', version=1)  # don't do this
 print(cacheV1.get('b'))  # Schrödinger's data ('old B' or None)
 ```
 
+# Benchmarks
+
+Casually saving 10 items and reading them again:
+``` python3
+for i in range(10):
+    cache[str(i)] = {"key": i, "other": None}
+for i in range(10):
+    _ = cache[str(i)]
+```
+
+Storage | Time
+--------|-----
+`PickleDir` | 0.42
+`shelve` | 6.68
+`diskcache.Cache` | 1.09
+
+
+
 # Under the hood
 
 Serialized data is stored inside files in the same directory. The maximum number
