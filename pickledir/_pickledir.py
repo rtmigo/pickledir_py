@@ -1,15 +1,12 @@
 # SPDX-FileCopyrightText: (c) 2016 Artёm IG <github.com/rtmigo>
 # SPDX-License-Identifier: MIT
 
-import hashlib, zlib
 import os
 import pickle
 import zlib
-import unittest
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from typing import *
-import warnings
 
 from pickledir._hex import mask_4096
 
@@ -37,33 +34,24 @@ class PickleDir(Generic[T]):
     def _key_to_bytes(key: object) -> bytes:
         # Protocol version 5 was added in Python 3.8. It adds support for
         # out-of-band data and speedup for in-band data.
+
+        # We must be sure that the hashes will be the same even if user
+        # upgrades Python to a newer version. So for the keys protocol
+        # is always 5
         return pickle.dumps(key, 5)
 
     @staticmethod
     def _bytes_to_key(data: bytes) -> object:
-        # Protocol version 5 was added in Python 3.8. It adds support for
-        # out-of-band data and speedup for in-band data.
         return pickle.loads(data)
 
     @staticmethod
     def _key_bytes_to_hash(key: bytes) -> str:
 
         return mask_4096(zlib.crc32(key))
-        #return mask_4096(h) #mask_4096(zlib.crc32(key.encode('utf-8')))
+        # return mask_4096(h) #mask_4096(zlib.crc32(key.encode('utf-8')))
 
     def _key_bytes_to_file(self, key: bytes) -> Path:
         return self.dirpath / (self._key_bytes_to_hash(key) + ".dat")
-
-    # @staticmethod
-    # def _key_to_hash(key: object) -> str:
-    #     try:
-    #         h = hash(key)
-    #     except TypeError:
-    #         h = zlib.crc32(PickleDir._key_to_bytes(key))
-    #     return mask_4096(h) #mask_4096(zlib.crc32(key.encode('utf-8')))
-    #
-    # def _key_to_file(self, key: object) -> Path:
-    #     return self.dirpath / (self._key_to_hash(key) + ".dat")
 
     def _load_file(self, filepath: Path, can_write=False) -> \
             Dict[bytes, Record]:
@@ -80,7 +68,6 @@ class PickleDir(Generic[T]):
         if version != self.version:
             os.remove(str(filepath))
             return dict()
-            # problems = pickle.loadMultiple(f)
 
         # removing outdated items
 
@@ -213,7 +200,7 @@ class PickleDir(Generic[T]):
             else:
                 return default
 
-    def _iter_records(self) -> Iterator[Tuple[str, Tuple]]:
+    def _iter_records(self) -> Iterator[Tuple[object, Tuple]]:
         for fn in self.dirpath.glob("*"):
 
             if self._is_temp_filename(fn):
@@ -224,6 +211,6 @@ class PickleDir(Generic[T]):
     def __contains__(self, key: str) -> bool:
         return self._get_record(key) is not None  # todo optimize
 
-    def items(self) -> Iterator[Tuple[str, T]]:
-        for url, rec in self._iter_records():
-            yield url, rec[2]
+    def items(self) -> Iterator[Tuple[object, T]]:
+        for key, rec in self._iter_records():
+            yield key, rec[2]

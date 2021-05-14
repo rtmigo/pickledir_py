@@ -5,7 +5,7 @@ be [pickle](https://docs.python.org/3/library/pickle.html) serializable.
 
 ---
 
-Unit-tested with Python 3.6-3.9 on macOS, Ubuntu and Windows.
+Unit-tested with Python 3.8-3.9 on macOS, Ubuntu and Windows.
 
 # Install
 
@@ -23,17 +23,17 @@ from pickledir import PickleDir
 cache = PickleDir('path/to/my_cache_dir')
 
 # saving data to files
-cache['a'] = 'hello, user!'
-cache['b'] = 1
-cache['c'] = [1, 2, 3, 4, 5]
+cache['key'] = 'hello, user!'
+cache[5] = 23
+cache[{'a', 'b', 'c'}] = 'abc'
 
 # reading files
-print(cache['a'])
-print(cache['b'])
-print(cache['c'])
+print(cache['key'])
+print(cache[5])
+print(cache[{'a', 'b', 'c'}])
 
 # delete item
-del cache['b']
+del cache['key']
 ```
 
 ## Read all values
