@@ -156,7 +156,7 @@ print(cacheV1.get('b'))  # Schrödinger's data ('old B' or None)
 Casually saving 10 items and reading them again:
 ``` python3
 for i in range(10):
-    cache[str(i)] = {"key": i, "other": None}
+    cache[str(i)] = {"data": i, "other": None}
 for i in range(10):
     _ = cache[str(i)]
 ```
@@ -169,9 +169,9 @@ Storage | Time
 `shelve` | 6.68
 `diskcache.Cache` | 1.09
 
-Lower time means faster caching.
+The lower "time" is better.
 
-Measured on macOS, Python 3.8, HDD (not SSD).
+Measured on macOS, Python 3.8, SATA HDD (not SSD), Journaled HFS+. 
 
 See sources in [benchmark](https://github.com/rtmigo/pickledir_py/tree/dev/benchmark) dir.
 

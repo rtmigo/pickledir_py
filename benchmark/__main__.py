@@ -9,7 +9,7 @@ from diskcache import Cache
 
 def write_and_read(cache):
     for i in range(10):
-        cache[str(i)] = {"key": i, "other": None}
+        cache[str(i)] = {"data": i, "other": None}
     for i in range(10):
         _ = cache[str(i)]
 
