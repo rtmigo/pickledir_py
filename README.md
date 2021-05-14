@@ -168,8 +168,6 @@ Storage | Time
 [`shelve`](https://docs.python.org/3/library/shelve.html) | 6.68
 [`diskcache.Cache`](https://pypi.org/project/diskcache/) | 1.09
 
-The lower "time" is better.
-
 Measured on macOS, Python 3.8, SATA HDD (not SSD), Journaled HFS+.
 
 See sources
