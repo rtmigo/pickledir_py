@@ -12,13 +12,18 @@ CI-tested with Python 3.8-3.9 on macOS, Ubuntu and Windows.
 
 
 The storage has zero initialization time, fast random access, fast reads and
-writes. Preferred for collections with the number of items within 3 thousands.
+writes.
 
-Unlike [shelve](https://docs.python.org/3/library/shelve.html), the data saved by
-PickleDir is cross-platform: you can write it on Linux and read on Windows.
+Unlike [shelve](https://docs.python.org/3/library/shelve.html), the data saved
+by PickleDir is cross-platform: you can write it on Linux and read on Windows.
 Unlike most database-based caching solutions (including the shelve), the
 PickleDir does not require the "open" and "close" the storage. It's always open,
 since it's just a directory in the file system.
+
+PickleDir is better for casual data storage. Database-based solutions are better
+when your storage has many elements (3 thousands or more). They will also may be
+faster when working with a predictably high load in terms of reading and
+writing.
 
 # Install
 
@@ -160,5 +165,5 @@ takes longer. If there are 3 items in the file, we have to read all three, even
 if only one is requested.
 
 If we have more than 4096 items, it is absolutely certain that some of them are
-adjacent in the same file. With so many items, the PickleDir may be not so 
+adjacent in the same file. With so many items, the PickleDir may be not so
 efficient as database-based caches.
