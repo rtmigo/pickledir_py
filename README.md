@@ -36,7 +36,6 @@ print(cache[{'a', 'b', 'c'}])
 for key, value in cache.items():
     print(key, value)
 
-
 # delete item
 del cache['key']
 ```
