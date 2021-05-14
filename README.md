@@ -32,15 +32,21 @@ print(cache['key'])
 print(cache[5])
 print(cache[{'a', 'b', 'c'}])
 
+# read all values
+for key, value in cache.items():
+    print(key, value)
+
+
 # delete item
 del cache['key']
 ```
 
-## Read all values
+## Type hints
 
 ``` python3
-for key, value in cache.items():
-    print(key, value)
+cache: PickleDir[str, int] = PickleDir('path/to/my_cache_dir')
+
+cache['string'] = 1
 ```
 
 ## Set expiration time on writing

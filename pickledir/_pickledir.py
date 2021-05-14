@@ -10,7 +10,8 @@ from typing import *
 
 from pickledir._hex import mask_4096
 
-T = TypeVar('T')
+TKey = TypeVar('TKey')
+TValue = TypeVar('TValue')
 
 
 class Record(NamedTuple):
@@ -19,7 +20,7 @@ class Record(NamedTuple):
     data: Any
 
 
-class PickleDir(Generic[T]):
+class PickleDir(Generic[TKey, TValue]):
     """Key-value file storage for objects serializable by pickle.
     Objects are identified by arbitrary string keys.
     Optionally, each object can be associated with its expiration date.
@@ -31,7 +32,7 @@ class PickleDir(Generic[T]):
         self.version = version
 
     @staticmethod
-    def _key_to_bytes(key: object) -> bytes:
+    def _key_to_bytes(key: TKey) -> bytes:
         # Protocol version 5 was added in Python 3.8. It adds support for
         # out-of-band data and speedup for in-band data.
 
@@ -41,7 +42,7 @@ class PickleDir(Generic[T]):
         return pickle.dumps(key, 5)
 
     @staticmethod
-    def _bytes_to_key(data: bytes) -> object:
+    def _bytes_to_key(data: bytes) -> TKey:
         return pickle.loads(data)
 
     @staticmethod
@@ -116,7 +117,7 @@ class PickleDir(Generic[T]):
     def _now():
         return datetime.utcnow().replace(tzinfo=timezone.utc)
 
-    def set(self, key: object, value: T,
+    def set(self, key: TKey, value: TValue,
             max_age: timedelta = None) -> None:
 
         key_bytes = self._key_to_bytes(key)
@@ -130,7 +131,7 @@ class PickleDir(Generic[T]):
 
         self._save_file(filepath, dict_in_file)
 
-    def __delitem__(self, key: object):
+    def __delitem__(self, key: TKey):
         key_bytes = self._key_to_bytes(key)
         filepath = self._key_bytes_to_file(key_bytes)
         dict_in_file = self._load_file(filepath, can_write=False)
@@ -139,7 +140,7 @@ class PickleDir(Generic[T]):
             del dict_in_file[key_bytes]
         self._save_file(filepath, dict_in_file)
 
-    def _get_record(self, key: object, max_age: timedelta = None) \
+    def _get_record(self, key: TKey, max_age: timedelta = None) \
             -> Optional[Record]:
 
         """
@@ -176,18 +177,18 @@ class PickleDir(Generic[T]):
 
         return item
 
-    def __getitem__(self, key: object) -> T:
+    def __getitem__(self, key: TKey) -> TValue:
         return self.get(key, default=KeyError)
 
-    def __setitem__(self, key: object, value: T):
+    def __setitem__(self, key: TKey, value: TValue):
         return self.set(key, value=value)
 
     @staticmethod
     def _is_temp_filename(file: Path):
         return file.name.startswith('~')
 
-    def get(self, key: object, max_age: timedelta = None,
-            default=None) -> T:
+    def get(self, key: TKey, max_age: timedelta = None,
+            default=None) -> TValue:
 
         item = self._get_record(key, max_age)
         if item is not None:
@@ -198,7 +199,7 @@ class PickleDir(Generic[T]):
             else:
                 return default
 
-    def _iter_records(self) -> Iterator[Tuple[object, Tuple]]:
+    def _iter_records(self) -> Iterator[Tuple[TKey, Tuple]]:
         for fn in self.dirpath.glob("*"):
 
             if self._is_temp_filename(fn):
@@ -206,9 +207,9 @@ class PickleDir(Generic[T]):
             for key_bytes, rec in self._load_file(fn).items():
                 yield self._bytes_to_key(key_bytes), rec
 
-    def __contains__(self, key: object) -> bool:
+    def __contains__(self, key: TKey) -> bool:
         return self._get_record(key) is not None  # todo optimize
 
-    def items(self) -> Iterator[Tuple[object, T]]:
+    def items(self) -> Iterator[Tuple[TKey, TValue]]:
         for key, rec in self._iter_records():
             yield key, rec[2]
