@@ -1,3 +1,5 @@
+# [pickledir](https://github.com/rtmigo/pickledir_py#readme)
+
 File-based key-value storage.
 
 Key and values are serialized
@@ -10,8 +12,7 @@ CI-tested with Python 3.8-3.9 on macOS, Ubuntu and Windows.
 
 
 The storage has zero initialization time, fast random access, fast reads and
-writes. Preferred for collections when the number of items is within 3
-thousands.
+writes. Preferred for collections with the number of items within 3 thousands.
 
 Unlike [shelve](https://docs.python.org/3/library/shelve.html) the data saved by
 PickleDir is cross-platform: you can write it on Linux and read on Windows.
@@ -159,5 +160,5 @@ takes longer. If there are 3 items in the file, we have to read all three, even
 if only one is requested.
 
 If we have more than 4096 items, it is absolutely certain that some of them are
-adjacent in the same file. With so many items, it's worth choosing a different
-caching solution.
+adjacent in the same file. With so many items, the PickleDir may be not so 
+efficient as database-based caches.
