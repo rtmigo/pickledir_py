@@ -207,21 +207,25 @@ def key_to_hash(key: object) -> str:
 
 def find_same_hash_keys(first_key="key_one") -> Iterable[str]:
     first_key_hash = key_to_hash(first_key)
+    print(first_key_hash)
     i = 0
     yield first_key
     while True:
         i += 1
         k = f"key{i}"
+        #k = k[::-1]
+        #print(key_to_hash(k))
         if key_to_hash(k) == first_key_hash:
             yield k
 
 
 if __name__ == "__main__":
+    #find_same_hash_keys()
     pass
     # find_same_hash_keys()
     # TestCache().test_get_set_item()
     # TestCache().test_file_removed_when_expired()
-    unittest.main()
-    # from itertools import islice
-    # print(list(islice(find_same_hash_keys(), 5)))
+    #unittest.main()
+    from itertools import islice
+    print(list(islice(find_same_hash_keys(), 5)))
     # print()

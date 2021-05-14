@@ -4,7 +4,7 @@
 import random
 import unittest
 
-from pickledir._hex import padded_hex, hex_last_n, mask_4096
+from pickledir._hex import padded_hex, hex_last_n, mask_4096, hash_4096
 
 
 class TestHex(unittest.TestCase):
@@ -26,3 +26,13 @@ class TestHex(unittest.TestCase):
             self.assertGreaterEqual(parsed, 0)
             self.assertLess(parsed, 4096)
 
+    def test_hash(self):
+        # testing that we are getting all 4096 values
+        hashes = set()
+        for i in range(20000):
+            h = hash_4096(str(i).encode())
+            self.assertEqual(len(h), 3)
+            hashes.add(h)
+            if len(hashes) >= 4096:
+                return
+        raise AssertionError(len(hashes))

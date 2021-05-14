@@ -15,15 +15,15 @@ The storage has zero initialization time, fast random access, fast reads and
 writes.
 
 Unlike [shelve](https://docs.python.org/3/library/shelve.html), the data saved
-by PickleDir is cross-platform: you can write it on Linux and read on Windows.
-Unlike most database-based caching solutions (including the shelve), the
-PickleDir does not require the "open" and "close" storage. It's always open
-since it's just a directory in the file system.
+by PickleDir is cross-platform: you can write it on Linux and read the same
+files on Windows. Unlike most database-based caching solutions (including the
+shelve), the PickleDir does not require the "open" and "close" storage. It's
+always open since it's just a directory in the file system.
 
 PickleDir is better for casual data storage. Database-based solutions are
 preferred when your storage has many elements (3 thousand or more). They will
-also be faster when working with a predictably high load in terms of reading
-and writing.
+also be faster when working with a predictably high load in terms of reading and
+writing.
 
 # Install
 
