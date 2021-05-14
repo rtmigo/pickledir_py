@@ -3,12 +3,11 @@
 
 import os
 import pickle
-import zlib
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from typing import *
 
-from pickledir._hex import mask_4096
+from pickledir._hex import hash_4096
 
 TKey = TypeVar('TKey')
 TValue = TypeVar('TValue')
@@ -46,8 +45,9 @@ class PickleDir(Generic[TKey, TValue]):
         return pickle.loads(data)
 
     @staticmethod
-    def _key_bytes_to_hash(key: bytes) -> str:
-        return mask_4096(zlib.crc32(key))
+    def _key_bytes_to_hash(key_bytes: bytes) -> str:
+
+        return hash_4096(key_bytes)
 
     def _key_bytes_to_file(self, key: bytes) -> Path:
         return self.dirpath / self._key_bytes_to_hash(key)
@@ -117,12 +117,12 @@ class PickleDir(Generic[TKey, TValue]):
             except FileNotFoundError:
                 filepath.parent.mkdir(parents=True)
                 f = temp_filepath.open("wb")
-            pickle.dump((format_version, self.version, items), f, pickle.HIGHEST_PROTOCOL)
+            pickle.dump((format_version, self.version, items), f,
+                        pickle.HIGHEST_PROTOCOL)
         finally:
             f.close()
 
-        #with temp_filepath.open("wb") as f:
-
+        # with temp_filepath.open("wb") as f:
 
         temp_filepath.replace(filepath)
 
