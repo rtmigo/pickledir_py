@@ -166,7 +166,7 @@ Storage | Time
 --------|-----
 `PickleDir` | 0.42
 [`shelve`](https://docs.python.org/3/library/shelve.html) | 6.68
-[diskcache.Cache](https://pypi.org/project/diskcache/) | 1.09
+[`diskcache.Cache`](https://pypi.org/project/diskcache/) | 1.09
 
 The lower "time" is better.
 
