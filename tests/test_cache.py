@@ -39,7 +39,7 @@ class TestCache(unittest.TestCase):
 
             cache[5] = 23
             cache[{1, 2, 3, 4, 5}] = 'the set'
-            cache[ [{5, 1}, {3, 4}] ] = 'list with sets'
+            cache[[{5, 1}, {3, 4}]] = 'list with sets'
 
             self.assertEqual(cache[{1, 2, 3, 4, 5}], 'the set')
             self.assertEqual(cache[[{5, 1}, {3, 4}]], 'list with sets')
@@ -194,6 +194,11 @@ class TestCache(unittest.TestCase):
             self.assertEqual(len(list(cache.items())), 3)
 
             self.assertFalse(tmp.exists())
+
+    def test_generic_types(self):
+        with TemporaryDirectory() as td:
+            cache: PickleDir[str, int] = PickleDir(td)
+            cache['a'] = 1
 
 
 def key_to_hash(key: object) -> str:
