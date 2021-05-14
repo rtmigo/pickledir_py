@@ -175,6 +175,11 @@ Measured on macOS, Python 3.8, SATA HDD (not SSD), Journaled HFS+.
 See sources
 in [benchmark](https://github.com/rtmigo/pickledir_py/tree/dev/benchmark) dir.
 
+The main advantage of
+`pickledir` is the lack of time required to create a database or initialize
+tables. If we did not save 10 elements, but 1000 in a row,
+`shelve` and `diskcache` would be faster than `pickledir`.
+
 # Under the hood
 
 Serialized data is stored inside files in the same directory. Each file contains
@@ -184,5 +189,7 @@ are uniformly distributed between the files.
 Reading is slower when a file contains more than one item. Therefore, the
 PickleDir is better suited for cases with the number of items within a few
 thousand.
+
+
 
 
