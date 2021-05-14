@@ -165,8 +165,8 @@ for i in range(10):
 Storage | Time
 --------|-----
 `PickleDir` | 0.42
-`shelve` | 6.68
-`diskcache.Cache` | 1.09
+[`shelve`](https://docs.python.org/3/library/shelve.html) | 6.68
+[`diskcache.Cache`](https://pypi.org/project/diskcache/) | 1.09
 
 The lower "time" is better.
 
@@ -177,7 +177,7 @@ in [benchmark](https://github.com/rtmigo/pickledir_py/tree/dev/benchmark) dir.
 
 The main advantage of
 `pickledir` is the lack of time required to create a database or initialize
-tables. If we did not save 10 elements, but 1000 in a row,
+tables. If we did not save 10 items, but 1000 in a row,
 `shelve` and `diskcache` would be faster than `pickledir`.
 
 # Under the hood

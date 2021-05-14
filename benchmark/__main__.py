@@ -6,12 +6,14 @@ from tempfile import TemporaryDirectory
 from pickledir import PickleDir
 from diskcache import Cache
 
-N = 10
+ITEMS = 10
+RUNS = 100
+
 
 def write_and_read(cache):
-    for i in range(N):
+    for i in range(ITEMS):
         cache[str(i)] = {"data": i, "other": None}
-    for i in range(N):
+    for i in range(ITEMS):
         _ = cache[str(i)]
 
 
@@ -32,10 +34,11 @@ def run_shelve():
         with shelve.open(td + "/file") as cache:
             write_and_read(cache)
 
+
 def bench(name: str, func: Callable):
     time = timeit.timeit(
         stmt=func,
-        number=100)
+        number=RUNS)
     print(f"{name} | {time:.2f}")
 
 
