@@ -1,16 +1,23 @@
 File-based key-value storage.
 
 Key and values are serialized
-with [pickle](https://docs.python.org/3/library/pickle.html).
-Data is kept in files in the specified directory.
+with [pickle](https://docs.python.org/3/library/pickle.html). Data is kept in
+files in the specified directory.
 
-The storage has zero initialization time, fast random access, fast reads and
-writes. Preferred for collections when the number of items is within 
-3 thousands.
+CI-tested with Python 3.8-3.9 on macOS, Ubuntu and Windows.
 
 ---
 
-CI-tested with Python 3.8-3.9 on macOS, Ubuntu and Windows.
+
+The storage has zero initialization time, fast random access, fast reads and
+writes. Preferred for collections when the number of items is within 3
+thousands.
+
+Unlike [shelve](https://docs.python.org/3/library/shelve.html) the data saved by
+PickleDir is cross-platform: you can write it on Linux and read on Windows.
+Unlike most database-based caching solutions (including the shelve), the
+PickleDir does not require the "open" and "close" the storage. It's always open,
+since it's just a directory in a file system.
 
 # Install
 
@@ -20,28 +27,45 @@ $ pip3 install pickledir
 
 # Use
 
-## Save, read, delete
+## Create
 
 ``` python3
 from pickledir import PickleDir
 
 cache = PickleDir('path/to/my_cache_dir')
+```
 
-# saving data to files
+## Write
+
+Keys do not need to be hashable. They only need to be serializable with `pickle`
+.
+
+When you assign a value, the data is literally written to a file.
+
+``` python3
 cache['key'] = 'hello, user!'
 cache[5] = 23
 cache[{'a', 'b', 'c'}] = 'abc'
+```
 
-# reading files
+## Read
+
+``` python3
 print(cache['key'])
 print(cache[5])
 print(cache[{'a', 'b', 'c'}])
+```
 
-# read all values
+## Read all values
+
+``` python3 
 for key, value in cache.items():
     print(key, value)
+```    
 
-# delete item
+## Delete item
+
+``` python3
 del cache['key']
 ```
 
@@ -76,6 +100,12 @@ cache.get('b' max_age = datetime.timedelta(seconds=9)) # 1000
 ```
 
 ## Set data version
+
+Setting the data version makes it easy to mark old data as obsolete.
+
+For example, you cached the result of a function, and then changed the
+implementation of that function. In this case, there is no need to delete old
+files from the cache. Just change the version number.
 
 ``` python3 
 cache = PickleDir('path/to/dir', version=1)
