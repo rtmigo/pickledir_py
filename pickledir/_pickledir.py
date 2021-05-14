@@ -50,7 +50,7 @@ class PickleDir(Generic[TKey, TValue]):
         return mask_4096(zlib.crc32(key))
 
     def _key_bytes_to_file(self, key: bytes) -> Path:
-        return self.dirpath / (self._key_bytes_to_hash(key) + ".dat")
+        return self.dirpath / self._key_bytes_to_hash(key)
 
     def _load_file(self, filepath: Path, can_write=False) -> \
             Dict[bytes, Record]:
@@ -62,7 +62,7 @@ class PickleDir(Generic[TKey, TValue]):
             return dict()
 
         with filepath.open("rb") as f:
-            (version, itemsDict) = pickle.load(f)
+            (format_version, version, itemsDict) = pickle.load(f)
 
         if version != self.version:
             os.remove(str(filepath))
@@ -98,18 +98,31 @@ class PickleDir(Generic[TKey, TValue]):
             os.remove(filepath)
             return
 
-        if not filepath.parent.exists():
-            filepath.parent.mkdir(parents=True)
+        # if not filepath.parent.exists():
+        #     filepath.parent.mkdir(parents=True)
 
         temp_filepath = filepath.parent / ("~" + filepath.name)
         assert self._is_temp_filename(temp_filepath)
-        try:
-            os.remove(str(temp_filepath))
-        except FileNotFoundError:
-            pass
+        # try:
+        #     os.remove(str(temp_filepath))
+        # except FileNotFoundError:
+        #     pass
 
-        with temp_filepath.open("wb") as f:
-            pickle.dump((self.version, items), f, pickle.HIGHEST_PROTOCOL)
+        format_version = 1
+
+        f = None
+        try:
+            try:
+                f = temp_filepath.open("wb")
+            except FileNotFoundError:
+                filepath.parent.mkdir(parents=True)
+                f = temp_filepath.open("wb")
+            pickle.dump((format_version, self.version, items), f, pickle.HIGHEST_PROTOCOL)
+        finally:
+            f.close()
+
+        #with temp_filepath.open("wb") as f:
+
 
         temp_filepath.replace(filepath)
 
@@ -201,7 +214,6 @@ class PickleDir(Generic[TKey, TValue]):
 
     def _iter_records(self) -> Iterator[Tuple[TKey, Tuple]]:
         for fn in self.dirpath.glob("*"):
-
             if self._is_temp_filename(fn):
                 os.remove(str(fn))
             for key_bytes, rec in self._load_file(fn).items():

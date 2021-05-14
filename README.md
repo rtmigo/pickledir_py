@@ -1,11 +1,29 @@
+# [pickledir](https://github.com/rtmigo/pickledir_py#readme)
+
 File-based key-value storage.
 
-Keys and objects must
-be [pickle](https://docs.python.org/3/library/pickle.html) serializable.
+Keys and values are serialized
+with [pickle](https://docs.python.org/3/library/pickle.html). Data is kept in
+files in the specified directory.
+
+CI-tested with Python 3.8-3.9 on macOS, Ubuntu and Windows.
 
 ---
 
-Unit-tested with Python 3.8-3.9 on macOS, Ubuntu and Windows.
+
+The storage has zero initialization time, fast random access, fast reads and
+writes.
+
+Unlike [shelve](https://docs.python.org/3/library/shelve.html), the data saved
+by PickleDir is cross-platform: you can write it on Linux and read on Windows.
+Unlike most database-based caching solutions (including the shelve), the
+PickleDir does not require the "open" and "close" the storage. It's always open,
+since it's just a directory in the file system.
+
+PickleDir is better for casual data storage. Database-based solutions are better
+when your storage has many elements (3 thousands or more). They will also may be
+faster when working with a predictably high load in terms of reading and
+writing.
 
 # Install
 
@@ -15,28 +33,45 @@ $ pip3 install pickledir
 
 # Use
 
-## Save, read, delete
+## Create
 
 ``` python3
 from pickledir import PickleDir
 
 cache = PickleDir('path/to/my_cache_dir')
+```
 
-# saving data to files
+## Write
+
+Keys do not need to be hashable. They only need to be serializable with `pickle`
+.
+
+When you assign a value, the data is literally written to a file.
+
+``` python3
 cache['key'] = 'hello, user!'
 cache[5] = 23
 cache[{'a', 'b', 'c'}] = 'abc'
+```
 
-# reading files
+## Read
+
+``` python3
 print(cache['key'])
 print(cache[5])
 print(cache[{'a', 'b', 'c'}])
+```
 
-# read all values
+## Read all values
+
+``` python3 
 for key, value in cache.items():
     print(key, value)
+```    
 
-# delete item
+## Delete item
+
+``` python3
 del cache['key']
 ```
 
@@ -71,6 +106,12 @@ cache.get('b' max_age = datetime.timedelta(seconds=9)) # 1000
 ```
 
 ## Set data version
+
+Setting the data version makes it easy to mark old data as obsolete.
+
+For example, you cached the result of a function, and then changed the
+implementation of that function. In this case, there is no need to delete old
+files from the cache. Just change the version number.
 
 ``` python3 
 cache = PickleDir('path/to/dir', version=1)
@@ -124,4 +165,5 @@ takes longer. If there are 3 items in the file, we have to read all three, even
 if only one is requested.
 
 If we have more than 4096 items, it is absolutely certain that some of them are
-adjacent in the same file. With so many items, it's worth choosing a different caching solution.
+adjacent in the same file. With so many items, the PickleDir may be not so
+efficient as database-based caches.
