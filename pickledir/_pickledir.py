@@ -46,7 +46,6 @@ class PickleDir(Generic[TKey, TValue]):
 
     @staticmethod
     def _key_bytes_to_hash(key_bytes: bytes) -> str:
-
         return hash_4096(key_bytes)
 
     def _key_bytes_to_file(self, key: bytes) -> Path:
@@ -98,15 +97,8 @@ class PickleDir(Generic[TKey, TValue]):
             os.remove(filepath)
             return
 
-        # if not filepath.parent.exists():
-        #     filepath.parent.mkdir(parents=True)
-
         temp_filepath = filepath.parent / ("~" + filepath.name)
         assert self._is_temp_filename(temp_filepath)
-        # try:
-        #     os.remove(str(temp_filepath))
-        # except FileNotFoundError:
-        #     pass
 
         format_version = 1
 
