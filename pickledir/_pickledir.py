@@ -61,35 +61,36 @@ class PickleDir(Generic[TKey, TValue]):
             return dict()
 
         with filepath.open("rb") as f:
-            (format_version, version, itemsDict) = pickle.load(f)
+            (format_version, data_version, items_dict) = pickle.load(f)
 
-        if version != self.version:
+        if data_version != self.version:
             os.remove(str(filepath))
             return dict()
 
         # removing outdated items
 
         changed = False
-        if itemsDict:
+        if items_dict:
             now = self._now()
             for key_bytes, (creationTime, expirationTime, message) in tuple(
-                    itemsDict.items()):
+                    items_dict.items()):
                 if expirationTime and now >= expirationTime:
-                    del itemsDict[key_bytes]
+                    # todo avoid unnecessary deletions when can_write = False
+                    del items_dict[key_bytes]
                     changed = True
 
         # if something is deleted (and modification of the file is allowed by
         # the argument), save the modified dictionary back to file
 
         if changed and can_write:
-            if itemsDict:
-                self._save_file(filepath, itemsDict)
+            if items_dict:
+                self._save_file(filepath, items_dict)
             else:
                 # no more data in this file
                 os.remove(str(filepath))
 
         # возвращаю результат
-        return itemsDict
+        return items_dict
 
     def _save_file(self, filepath: Path, items: Dict[bytes, Record]):
 
