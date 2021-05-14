@@ -114,7 +114,7 @@ This implementation is extremely simple and universally compatible. It has zero
 initialization time. It is very fast when reading and writing, when the number
 of items is small.
 
-However, if the file contains more than one item, each read / write operation
+However, if the file contains more than one item, each read/write operation
 takes longer. If there are 3 items in the file, we have to read all three, even
 if only one is requested.
 

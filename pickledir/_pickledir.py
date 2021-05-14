@@ -46,9 +46,7 @@ class PickleDir(Generic[T]):
 
     @staticmethod
     def _key_bytes_to_hash(key: bytes) -> str:
-
         return mask_4096(zlib.crc32(key))
-        # return mask_4096(h) #mask_4096(zlib.crc32(key.encode('utf-8')))
 
     def _key_bytes_to_file(self, key: bytes) -> Path:
         return self.dirpath / (self._key_bytes_to_hash(key) + ".dat")
@@ -208,7 +206,7 @@ class PickleDir(Generic[T]):
             for key_bytes, rec in self._load_file(fn).items():
                 yield self._bytes_to_key(key_bytes), rec
 
-    def __contains__(self, key: str) -> bool:
+    def __contains__(self, key: object) -> bool:
         return self._get_record(key) is not None  # todo optimize
 
     def items(self) -> Iterator[Tuple[object, T]]:
