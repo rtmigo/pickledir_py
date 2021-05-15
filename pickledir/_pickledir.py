@@ -193,6 +193,22 @@ class PickleDir(Generic[TKey, TValue]):
     def _is_temp_filename(file: Path):
         return file.name.startswith('~')
 
+    @staticmethod
+    def _is_data_basename(basename: str):
+        # returns True for those filenames that are created and deleted
+        # by the PickleDir object. It means self.dirpath/basename is a
+        # file managed by PickleDir.
+        #
+        # Other files in self.dirpath will be ignored by PickleDir
+
+        if len(basename) == 3 and basename.isalnum():
+            return True
+
+        if basename.startswith('~'):
+            return True
+
+        return False
+
     def get(self, key: TKey, max_age: timedelta = None,
             default=None) -> TValue:
 
@@ -207,8 +223,10 @@ class PickleDir(Generic[TKey, TValue]):
 
     def _iter_records(self) -> Iterator[Tuple[TKey, Tuple]]:
         for fn in self.dirpath.glob("*"):
+            if not self._is_data_basename(fn.name):
+                continue
             if self._is_temp_filename(fn):
-                os.remove(str(fn))
+                os.remove(str(fn))  # todo test
             for key_bytes, rec in self._load_file(fn).items():
                 yield self._bytes_to_key(key_bytes), rec
 
