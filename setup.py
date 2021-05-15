@@ -28,7 +28,7 @@ setup(
     description="File-based key-value storage for pickle-serializable "
                 "keys and values.",
 
-    keywords="cache pickle file directory".split(),
+    keywords="cache pickle file directory caching data dict".split(),
 
     long_description=(Path(__file__).parent / 'README.md').read_text(),
     long_description_content_type='text/markdown',
