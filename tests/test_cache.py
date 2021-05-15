@@ -187,13 +187,30 @@ class TestCache(unittest.TestCase):
             cache['b'] = 2
             cache['c'] = 3
 
-            tmp = (cache.dirpath / "~labuda.dat")
+            tmp = (cache.dirpath / "~labuda")
             tmp.write_text('life is short')
             self.assertTrue(tmp.exists())
 
             self.assertEqual(len(list(cache.items())), 3)
 
             self.assertFalse(tmp.exists())
+
+    def test_other_files_ignored_on_iteraton(self):
+        with TemporaryDirectory() as td:
+            cache = PickleDir(td)
+            cache['a'] = 1
+            cache['b'] = 2
+            cache['c'] = 3
+
+            (cache.dirpath/".DS_Store").mkdir() # will also be ignored
+
+            tmp = (cache.dirpath / "survivor")
+            tmp.write_text('I will survive!')
+            self.assertTrue(tmp.exists())
+
+            self.assertEqual(len(list(cache.items())), 3)
+
+            self.assertTrue(tmp.exists())
 
     def test_generic_types(self):
         with TemporaryDirectory() as td:
@@ -204,6 +221,14 @@ class TestCache(unittest.TestCase):
         self.assertEqual(key_to_hash('first'), '7a4')
         self.assertEqual(key_to_hash('second'), '68f')
         self.assertEqual(key_to_hash('third'), '09b')
+
+    def test_our_filenames(self):
+        self.assertEqual(PickleDir._is_data_basename('~12b'), True)
+        self.assertEqual(PickleDir._is_data_basename('~'), True)
+        self.assertEqual(PickleDir._is_data_basename('abc'), True)
+        self.assertEqual(PickleDir._is_data_basename('111'), True)
+        self.assertEqual(PickleDir._is_data_basename('abcd'), False)
+
 
 
 def key_to_hash(key: object) -> str:
