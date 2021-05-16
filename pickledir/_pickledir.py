@@ -165,6 +165,8 @@ class PickleDir(Generic[TKey, TValue]):
         :return: The item (if found) or None.
         """
 
+        # this method is used by filememo (should not be changed)
+
         key_bytes = self._key_to_bytes(key)
         path = self._key_bytes_to_file(key_bytes)
 

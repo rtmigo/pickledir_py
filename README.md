@@ -6,7 +6,7 @@ Keys and values are serialized
 with [pickle](https://docs.python.org/3/library/pickle.html). Data is kept in
 files in the specified directory.
 
-CI-tested with Python 3.8-3.9 on macOS, Ubuntu and Windows.
+CI tests are done in Python 3.8-3.9 on macOS, Ubuntu and Windows.
 
 ---
 
