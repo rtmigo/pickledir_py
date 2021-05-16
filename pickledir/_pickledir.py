@@ -229,7 +229,7 @@ class PickleDir(Generic[TKey, TValue]):
             if not self._is_data_basename(fn.name):
                 continue
             if self._is_temp_filename(fn):
-                os.remove(str(fn))  # todo test
+                os.remove(str(fn))
             for key_bytes, rec in self._load_file(fn).items():
                 yield self._bytes_to_key(key_bytes), rec
 
