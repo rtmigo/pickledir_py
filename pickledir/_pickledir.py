@@ -14,6 +14,7 @@ TValue = TypeVar('TValue')
 
 
 class Record(NamedTuple):
+    # used by filememo, should not be changed
     created: datetime
     expires: Optional[datetime]
     data: Any
