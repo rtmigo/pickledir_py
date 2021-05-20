@@ -1,6 +1,6 @@
 # SPDX-FileCopyrightText: (c) 2016 Artёm IG <github.com/rtmigo>
 # SPDX-License-Identifier: MIT
-
+import io
 import os
 import pickle
 from datetime import datetime, timezone, timedelta
@@ -104,7 +104,7 @@ class PickleDir(Generic[TKey, TValue]):
 
         format_version = 1
 
-        f = None
+        f: Optional[BinaryIO] = None
         try:
             try:
                 f = temp_filepath.open("wb")
@@ -114,7 +114,8 @@ class PickleDir(Generic[TKey, TValue]):
             pickle.dump((format_version, self.version, items), f,
                         pickle.HIGHEST_PROTOCOL)
         finally:
-            f.close()
+            if f:
+                f.close()
 
         # with temp_filepath.open("wb") as f:
 
