@@ -27,7 +27,6 @@ class PickleDir(Generic[TKey, TValue]):
     """
 
     def __init__(self, dirpath: Union[str, Path], version: int = 1):
-
         self.dirpath = Path(dirpath)
         self.version = version
 
@@ -73,9 +72,9 @@ class PickleDir(Generic[TKey, TValue]):
         changed = False
         if items_dict:
             now = self._now()
-            for key_bytes, (creationTime, expirationTime, message) in tuple(
-                    items_dict.items()):
-                if expirationTime and now >= expirationTime:
+            for key_bytes, (creation_time, expiration_time, message) in \
+                    tuple(items_dict.items()):
+                if expiration_time and now >= expiration_time:
                     # todo avoid unnecessary deletions when can_write = False
                     del items_dict[key_bytes]
                     changed = True
@@ -132,10 +131,10 @@ class PickleDir(Generic[TKey, TValue]):
         filepath = self._key_bytes_to_file(key_bytes)
         dict_in_file = self._load_file(filepath, can_write=False)
 
-        creationTime = self._now()
-        expirationTime = creationTime + max_age if max_age else None
+        creation_time = self._now()
+        expiration_time = creation_time + max_age if max_age else None
 
-        dict_in_file[key_bytes] = Record(creationTime, expirationTime, value)
+        dict_in_file[key_bytes] = Record(creation_time, expiration_time, value)
 
         self._save_file(filepath, dict_in_file)
 
@@ -180,9 +179,9 @@ class PickleDir(Generic[TKey, TValue]):
         item = items_dict.get(key_bytes)
 
         if max_age is not None and item is not None:
-            creationTime = item[0]
-            minCreationTime = self._now() - max_age
-            if creationTime < minCreationTime:
+            creation_time = item[0]
+            min_creation_time = self._now() - max_age
+            if creation_time < min_creation_time:
                 return None
 
         return item
