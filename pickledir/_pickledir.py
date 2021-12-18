@@ -114,7 +114,7 @@ class PickleDir(Generic[TKey, TValue]):
             pickle.dump((format_version, self.version, items), f,
                         pickle.HIGHEST_PROTOCOL)
         finally:
-            if f:
+            if f is not None:
                 f.close()
 
         # with temp_filepath.open("wb") as f:
